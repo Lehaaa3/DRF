@@ -1,0 +1,46 @@
+[
+  {
+    "model": "materials.lesson",
+    "pk": 1,
+    "fields": {
+      "title": "Алгебра",
+      "description": "научим считать",
+      "image": "",
+      "url": null,
+      "course": 1
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 2,
+    "fields": {
+      "title": "Английский язык",
+      "description": "научим говорить",
+      "image": "",
+      "url": null,
+      "course": 1
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 3,
+    "fields": {
+      "title": "География",
+      "description": "научим ориентироваться",
+      "image": "",
+      "url": null,
+      "course": 1
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 4,
+    "fields": {
+      "title": "Химия",
+      "description": "научим химичить",
+      "image": "",
+      "url": null,
+      "course": 1
+    }
+  }
+]

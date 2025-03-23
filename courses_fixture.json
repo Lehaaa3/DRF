@@ -1,0 +1,11 @@
+[
+  {
+    "model": "materials.course",
+    "pk": 1,
+    "fields": {
+      "title": "Школьные предметы",
+      "image": "",
+      "description": "Научим вас всему качественно"
+    }
+  }
+]
