@@ -15,3 +15,4 @@ Django Rest Framework HW-s
    python manage.py loaddata groups_fixture.json
    
 
+
