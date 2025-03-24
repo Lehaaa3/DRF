@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'materials',
     'rest_framework',
     'cities_light',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
