@@ -12,5 +12,3 @@ Django Rest Framework HW-s
    python manage.py loaddata courses_fixture.json
    python manage.py loaddata lessons_fixture.json
    python manage.py loaddata payments_fixture.json
-   
-
