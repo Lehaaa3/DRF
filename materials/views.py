@@ -1,8 +1,14 @@
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
+
 from rest_framework import viewsets
 from rest_framework import generics
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, Subscription
+from materials.paginators import CoursePagination, LessonPagination
 from materials.permissions import IsUserOwner, IsUserModerator
 from materials.serializers import CourseSerializer, LessonSerializer
 
@@ -10,6 +16,7 @@ from materials.serializers import CourseSerializer, LessonSerializer
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = CoursePagination
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -33,10 +40,30 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated, IsUserOwner, ~IsUserModerator]
         return [permission() for permission in self.permission_classes]
 
+    @action(detail=True, methods=['POST'])
+    def course_subscribe(self, request, pk=None):
+        user = self.request.user
+        course = get_object_or_404(Course, pk=pk)
+        try:
+            subs_item = Subscription.objects.get(user=user, course=course)
+            if subs_item.is_subscribed:
+                subs_item.is_subscribed = False
+                subs_item.save()
+                message = 'подписка удалена'
+            else:
+                subs_item.is_subscribed = True
+                subs_item.save()
+                message = 'подписка добавлена'
+        except ObjectDoesNotExist:
+            Subscription.objects.create(is_subscribed=True, user=user, course=course)
+            message = 'подписка добавлена'
+        return Response({"message": message})
+
 
 class LessonListApiView(generics.ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = LessonPagination
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -70,4 +97,4 @@ class LessonUpdateApiView(generics.UpdateAPIView):
 
 class LessonDestroyApiView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsUserOwner, ~IsUserModerator]
+    permission_classes = [IsAuthenticated & ~IsUserModerator | IsAuthenticated & IsUserOwner]
