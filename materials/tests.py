@@ -131,7 +131,7 @@ class SubscriptionForCourseTestCase(APITestCase):
             Тестирование удаления подписки на курс.
         """
 
-        self.subscription = Subscription.objects.create(is_subscribed=True, course=self.course, user=self.user)
+        self.subscription = Subscription.objects.create(course=self.course, user=self.user)
         url = f'/courses/{self.course.pk}/course_subscribe/'
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
