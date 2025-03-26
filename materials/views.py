@@ -38,6 +38,8 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated, IsUserOwner | IsUserModerator]
         elif self.action == 'destroy':
             self.permission_classes = [IsAuthenticated, IsUserOwner, ~IsUserModerator]
+        elif self.action == 'course_subscribe':
+            self.permission_classes = [IsAuthenticated]
         return [permission() for permission in self.permission_classes]
 
     @action(detail=True, methods=['POST'])
@@ -46,16 +48,10 @@ class CourseViewSet(viewsets.ModelViewSet):
         course = get_object_or_404(Course, pk=pk)
         try:
             subs_item = Subscription.objects.get(user=user, course=course)
-            if subs_item.is_subscribed:
-                subs_item.is_subscribed = False
-                subs_item.save()
-                message = 'подписка удалена'
-            else:
-                subs_item.is_subscribed = True
-                subs_item.save()
-                message = 'подписка добавлена'
+            subs_item.delete()
+            message = 'подписка удалена'
         except ObjectDoesNotExist:
-            Subscription.objects.create(is_subscribed=True, user=user, course=course)
+            Subscription.objects.create(user=user, course=course)
             message = 'подписка добавлена'
         return Response({"message": message})
 

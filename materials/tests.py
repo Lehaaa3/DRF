@@ -44,6 +44,10 @@ class LessonTestCase(APITestCase):
         self.assertEqual(response.json(), {'count': 1, 'next': None, 'previous': None, 'results': [
             {'title': 'Test_lesson', 'description': 'Test_lesson', 'course': 4, 'url': None}]})
 
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_getting_lesson_detail(self):
         """
             Тестирование получения конкретного урока
@@ -53,6 +57,10 @@ class LessonTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(),
                          {'title': 'Test_lesson', 'description': 'Test_lesson', 'course': 3, 'url': None})
+
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_lesson(self):
         """
@@ -70,6 +78,10 @@ class LessonTestCase(APITestCase):
         self.assertEqual(response.json(), {'title': 'TEST', 'description': 'TEST', 'course': 1, 'url': None}
                          )
 
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_update_lesson(self):
         """
             Тестирование редактирования урока
@@ -83,6 +95,10 @@ class LessonTestCase(APITestCase):
         self.assertEqual(response.json(),
                          {'title': 'TEST_UPDATE', 'description': 'Test_lesson', 'course': 5, 'url': None})
 
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_delete_lesson(self):
         """
             Тестирование удаления урока
@@ -92,6 +108,10 @@ class LessonTestCase(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Lesson.objects.filter(description='Test_lesson').count(), 0)
+
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class SubscriptionForCourseTestCase(APITestCase):
@@ -113,7 +133,6 @@ class SubscriptionForCourseTestCase(APITestCase):
             description='Test_course',
             owner=self.user
         )
-
         self.client.force_authenticate(user=self.user)
 
     def test_subscription_create(self):
@@ -126,13 +145,20 @@ class SubscriptionForCourseTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), {'message': 'подписка добавлена'})
 
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
     def test_subscription_delete(self):
         """
             Тестирование удаления подписки на курс.
         """
-
-        self.subscription = Subscription.objects.create(is_subscribed=True, course=self.course, user=self.user)
         url = f'/courses/{self.course.pk}/course_subscribe/'
+        self.subscription = Subscription.objects.create(course=self.course, user=self.user)
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), {'message': 'подписка удалена'})
+
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
