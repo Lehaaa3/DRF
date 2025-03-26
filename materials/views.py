@@ -38,6 +38,8 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated, IsUserOwner | IsUserModerator]
         elif self.action == 'destroy':
             self.permission_classes = [IsAuthenticated, IsUserOwner, ~IsUserModerator]
+        elif self.action == 'course_subscribe':
+            self.permission_classes = [IsAuthenticated]
         return [permission() for permission in self.permission_classes]
 
     @action(detail=True, methods=['POST'])
