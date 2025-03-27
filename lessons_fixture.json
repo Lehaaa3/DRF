@@ -5,6 +5,7 @@
     "fields": {
       "title": "Алгебра",
       "description": "научим считать",
+      "payment": 100,
       "image": "",
       "url": null,
       "course": 1
@@ -16,6 +17,7 @@
     "fields": {
       "title": "Английский язык",
       "description": "научим говорить",
+      "payment": 200,
       "image": "",
       "url": null,
       "course": 1
@@ -27,6 +29,7 @@
     "fields": {
       "title": "География",
       "description": "научим ориентироваться",
+      "payment": 100,
       "image": "",
       "url": null,
       "course": 1
@@ -38,6 +41,7 @@
     "fields": {
       "title": "Химия",
       "description": "научим химичить",
+      "payment": 200,
       "image": "",
       "url": null,
       "course": 1

@@ -2,12 +2,28 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from users.models import Payments, User
+from users.services import get_stripe_price, get_stripe_session
 
 
 class PaymentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payments
         fields = '__all__'
+
+
+class PaymentsCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payments
+        fields = '__all__'
+        read_only_fields = ['user', 'payment']
+
+    def validate(self, data):
+        if not data['paid_course'] and not data['paid_lesson']:
+            raise serializers.ValidationError("одно из полей 'paid_course' или 'paid_lesson' должно быть указано")
+        if data['paid_course'] and data['paid_lesson']:
+            raise serializers.ValidationError(
+                "Только одно из полей 'paid_course' или 'paid_lesson' должно быть указано")
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):

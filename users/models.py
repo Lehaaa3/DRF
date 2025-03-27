@@ -38,6 +38,7 @@ class Payments(models.Model):
                                     **NULLABLE)
     payment = models.PositiveIntegerField(verbose_name='сумма оплаты')
     payment_way = models.CharField(choices=PAYMENT_CHOICES, verbose_name='способ оплаты')
+    payment_url = models.URLField(max_length=1000, verbose_name='url', **NULLABLE)
 
     def __str__(self):
         return f"{self.user} - {self.payment}"
