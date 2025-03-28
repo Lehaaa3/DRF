@@ -11,6 +11,7 @@ from materials.models import Course, Lesson, Subscription
 from materials.paginators import CoursePagination, LessonPagination
 from materials.permissions import IsUserOwner, IsUserModerator
 from materials.serializers import CourseSerializer, LessonSerializer
+from materials.tasks import send_mail_for_subscribers
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -43,6 +44,16 @@ class CourseViewSet(viewsets.ModelViewSet):
         elif self.action == 'course_subscribe':
             self.permission_classes = [IsAuthenticated]
         return [permission() for permission in self.permission_classes]
+
+    def perform_update(self, serializer):
+        course = serializer.instance
+
+        subscriptions_list = course.subscriptions.all()
+        user_list = [subscription.user.email for subscription in subscriptions_list]
+
+        send_mail_for_subscribers.delay(course.title, user_list)
+
+        serializer.save(owner=self.request.user)
 
     @action(detail=True, methods=['POST'])
     def course_subscribe(self, request, pk=None):
